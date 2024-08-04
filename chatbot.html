@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        #chatbot {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 300px;
+            height: 400px;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: none;
+            flex-direction: column;
+        }
+        #chatbox {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        #input {
+            display: flex;
+            border-top: 1px solid #ccc;
+        }
+        #input textarea {
+            flex: 1;
+            border: none;
+            padding: 10px;
+        }
+        #input button {
+            border: none;
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="chatbot">
+    <div id="chatbox"></div>
+    <div id="input">
+        <textarea id="user-input" placeholder="How are you feeling today?"></textarea>
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<button onclick="toggleChatbot()">Chat with us</button>
+
+<script>
+    function toggleChatbot() {
+        var chatbot = document.getElementById('chatbot');
+        chatbot.style.display = chatbot.style.display === 'none' ? 'flex' : 'none';
+    }
+
+    function sendMessage() {
+        var userInput = document.getElementById('user-input').value;
+        var chatbox = document.getElementById('chatbox');
+        chatbox.innerHTML += `<div>User: ${userInput}</div>`;
+        
+        fetch('/chatbot', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: userInput }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            chatbox.innerHTML += `<div>Chatbot: ${data.response}</div>`;
+        });
+
+        document.getElementById('user-input').value = '';
+    }
+</script>
+
+</body>
+</html>

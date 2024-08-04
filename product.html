@@ -132,3 +132,76 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Page</title>
+</head>
+<body>
+    <h1 id="product-name"></h1>
+    <p id="product-description"></p>
+    <p>Price: $<span id="product-price"></span></p>
+    <p>Weight: <span id="product-weight"></span> g</p>
+    <p id="product-availability"></p>
+    <p>Deals: <span id="product-deals"></span></p>
+    <p>Promos: <span id="product-promos"></span></p>
+
+    <button onclick="addToCart()">Add to Cart</button>
+    <button onclick="addToWishlist()">Add to Wishlist</button>
+
+    <h2>Recommendations</h2>
+    <button onclick="fetchRecommendations()">Fetch Recommendations</button>
+    <ul id="recommendations"></ul>
+
+    <h2>Submit Feedback</h2>
+    <input type="number" id="user-id" placeholder="User ID">
+    <input type="number" id="product-id" placeholder="Product ID">
+    <input type="number" id="rating" placeholder="Rating (1-5)">
+    <button onclick="submitFeedback()">Submit Feedback</button>
+
+    <script>
+        function fetchRecommendations() {
+            const userId = document.getElementById('user-id').value;
+            fetch(`/recommendations?user_id=${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const list = document.getElementById('recommendations');
+                    list.innerHTML = '';
+                    data.forEach(productId => {
+                        const item = document.createElement('li');
+                        item.textContent = `Product ID: ${productId}`;
+                        list.appendChild(item);
+                    });
+                });
+        }
+
+        function submitFeedback() {
+            const userId = document.getElementById('user-id').value;
+            const productId = document.getElementById('product-id').value;
+            const rating = document.getElementById('rating').value;
+
+            fetch('/feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_id: userId, product_id: productId, rating: rating }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.status);
+            });
+        }
+
+        function addToCart() {
+            // Add to cart logic
+        }
+
+        function addToWishlist() {
+            // Add to wishlist logic
+        }
+    </script>
+</body>
+</html>

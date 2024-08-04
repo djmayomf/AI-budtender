@@ -219,3 +219,125 @@ def scrape_weedmaps_deals_route():
 
 if __name__ == '__main__':
     app.run(debug=True)
+from flask import Flask, request, jsonify
+import pandas as pd
+import pickle
+
+app = Flask(__name__)
+
+# Load the model
+with open('recommendation_model.pkl', 'rb') as f:
+    model = pickle.load(f)
+
+# Dummy database for user preferences
+user_preferences = pd.DataFrame(columns=['user_id', 'product_id', 'rating'])
+
+@app.route('/feedback', methods=['POST'])
+def receive_feedback():
+    global user_preferences
+    data = request.json
+    user_id = data['user_id']
+    product_id = data['product_id']
+    rating = data['rating']
+    
+    # Save feedback
+    feedback = pd.DataFrame([[user_id, product_id, rating]], columns=['user_id', 'product_id', 'rating'])
+    user_preferences = pd.concat([user_preferences, feedback], ignore_index=True)
+    
+    # Retrain the model
+    train_model()
+
+    return jsonify({'status': 'Feedback received'})
+
+def train_model():
+    global user_preferences
+    # Pivot user preferences
+    user_product_ratings = user_preferences.pivot(index='user_id', columns='product_id', values='rating').fillna(0)
+    
+    # Train a KNN model
+    model = NearestNeighbors(n_neighbors=5, algorithm='auto')
+    model.fit(user_product_ratings)
+    
+    # Save the model
+    with open('recommendation_model.pkl', 'wb') as f:
+        pickle.dump(model, f)
+
+@app.route('/recommendations', methods=['GET'])
+def get_recommendations():
+    user_id = request.args.get('user_id', type=int)
+    
+    # Pivot user preferences
+    user_product_ratings = user_preferences.pivot(index='user_id', columns='product_id', values='rating').fillna(0)
+    
+    # Get the user's ratings
+    user_ratings = user_product_ratings.loc[user_id].values.reshape(1, -1)
+    
+    # Predict similar users
+    distances, indices = model.kneighbors(user_ratings)
+    
+    # Aggregate recommendations
+    recommended_products = set()
+    for index in indices[0]:
+        similar_user_ratings = user_product_ratings.iloc[index]
+        recommended_products.update(similar_user_ratings[similar_user_ratings > 0].index)
+    
+    return jsonify(list(recommended_products))
+
+if __name__ == '__main__':
+    app.run(debug=True)
+import sqlite3
+
+def store_feedback(user_id, product_id, rating):
+    conn = sqlite3.connect('preferences.db')
+    c = conn.cursor()
+    c.execute('INSERT INTO preferences (user_id, product_id, rating) VALUES (?, ?, ?)', 
+              (user_id, product_id, rating))
+    conn.commit()
+    conn.close()
+from flask import Flask, request, jsonify
+import random
+
+app = Flask(__name__)
+
+@app.route('/chatbot', methods=['POST'])
+def chatbot():
+    data = request.json
+    user_message = data['message']
+    
+    # Simple mood-based responses
+    mood_responses = {
+        'happy': ['You might enjoy something uplifting and energetic!', 'How about a fun and exciting product?'],
+        'relaxed': ['Maybe a calming product is what you need.', 'How about something gentle and soothing?'],
+        'sad': ['A comforting product might help you feel better.', 'Consider something with a warm and cozy vibe.'],
+        'tired': ['You might like something that helps you relax and recharge.', 'How about a product that helps you unwind?'],
+        'stressed': ['Consider a product that can help you relieve stress.', 'How about something to help you relax and calm down?'],
+    }
+    
+    mood = get_mood(user_message)
+    response = mood_responses.get(mood, 'I am not sure how you feel. Could you tell me more?')
+    
+    return jsonify({'response': response})
+
+def get_mood(message):
+    # Simple keyword matching to determine mood
+    keywords = {
+        'happy': ['happy', 'excited', 'joyful'],
+        'relaxed': ['relaxed', 'calm', 'chilled'],
+        'sad': ['sad', 'depressed', 'down'],
+        'tired': ['tired', 'exhausted', 'weary'],
+        'stressed': ['stressed', 'anxious', 'overwhelmed']
+    }
+    
+    message = message.lower()
+    for mood, words in keywords.items():
+        if any(word in message for word in words):
+            return mood
+    return 'neutral'
+
+if __name__ == '__main__':
+    app.run(debug=True)
+from flask import send_from_directory
+
+@app.route('/chatbot.html')
+def serve_chatbot():
+    return send_from_directory('.', 'chatbot.html')
