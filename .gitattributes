@@ -1,2 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+pip install google-cloud-vision
+pip install beautifulsoup4 requests
+pip install flask stripe requests
+
