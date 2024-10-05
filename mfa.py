@@ -10,15 +10,25 @@ logging.basicConfig(level=logging.INFO)
 def send_verification_code(email):
     verification_code = random.randint(100000, 999999)
     
+    # Retrieve environment variables
+    email_address = os.getenv('EMAIL_ADDRESS')
+    email_password = os.getenv('EMAIL_PASSWORD')
+    smtp_server = os.getenv('SMTP_SERVER')
+
+    # Validate environment variables
+    if not email_address or not email_password or not smtp_server:
+        logging.error("Missing environment variables for email configuration.")
+        return "Failed to send email: Configuration error"
+
     # Send email with verification code
     msg = MIMEText(f'Your verification code is {verification_code}')
     msg['Subject'] = 'Your Verification Code'
-    msg['From'] = os.getenv('EMAIL_ADDRESS')
+    msg['From'] = email_address
     msg['To'] = email
 
     try:
-        with smtplib.SMTP(os.getenv('SMTP_SERVER')) as server:
-            server.login(os.getenv('EMAIL_ADDRESS'), os.getenv('EMAIL_PASSWORD'))
+        with smtplib.SMTP(smtp_server) as server:
+            server.login(email_address, email_password)
             server.send_message(msg)
         logging.info(f"Verification code sent to {email}")
         return verification_code
