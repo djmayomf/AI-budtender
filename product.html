@@ -17,9 +17,34 @@
     <button onclick="addToCart()">Add to Cart</button>
     <button onclick="addToWishlist()">Add to Wishlist</button>
 
+    <h2>Strains from Leafly</h2>
+    <button onclick="fetchLeaflyStrains()">Fetch Leafly Strains</button>
+    <ul id="leafly-strains"></ul>
+
+    <h2>Deals from Weedmaps</h2>
+    <button onclick="fetchWeedmapsDeals()">Fetch Weedmaps Deals</button>
+    <ul id="weedmaps-deals"></ul>
+
+    <h2>Recommendations</h2>
+    <button onclick="fetchRecommendations()">Fetch Recommendations</button>
+    <ul id="recommendations"></ul>
+
+    <h2>Submit Feedback</h2>
+    <input type="number" id="user-id" placeholder="User ID">
+    <input type="number" id="product-id" placeholder="Product ID">
+    <input type="number" id="rating" placeholder="Rating (1-5)">
+    <button onclick="submitFeedback()">Submit Feedback</button>
+
+    <h2>Upload ID</h2>
+    <form action="/upload_id" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="user_id" value="USER_ID_HERE">
+        <input type="file" name="file" accept="image/*" required>
+        <button type="submit">Upload ID</button>
+    </form>
+
     <script>
         const productId = 1; // Replace with dynamic product ID
-        
+
         function fetchProduct() {
             fetch(`/product/${productId}`)
                 .then(response => response.json())
@@ -62,38 +87,6 @@
             });
         }
 
-        fetchProduct();
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Page</title>
-</head>
-<body>
-    <h1 id="product-name"></h1>
-    <p id="product-description"></p>
-    <p>Price: $<span id="product-price"></span></p>
-    <p>Weight: <span id="product-weight"></span> g</p>
-    <p id="product-availability"></p>
-    <p>Deals: <span id="product-deals"></span></p>
-    <p>Promos: <span id="product-promos"></span></p>
-
-    <button onclick="addToCart()">Add to Cart</button>
-    <button onclick="addToWishlist()">Add to Wishlist</button>
-
-    <h2>Strains from Leafly</h2>
-    <button onclick="fetchLeaflyStrains()">Fetch Leafly Strains</button>
-    <ul id="leafly-strains"></ul>
-
-    <h2>Deals from Weedmaps</h2>
-    <button onclick="fetchWeedmapsDeals()">Fetch Weedmaps Deals</button>
-    <ul id="weedmaps-deals"></ul>
-
-    <script>
         function fetchLeaflyStrains() {
             fetch('/scrape/leafly/strains')
                 .then(response => response.json())
@@ -122,46 +115,6 @@
                 });
         }
 
-        function addToCart() {
-            // Add to cart logic
-        }
-
-        function addToWishlist() {
-            // Add to wishlist logic
-        }
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Page</title>
-</head>
-<body>
-    <h1 id="product-name"></h1>
-    <p id="product-description"></p>
-    <p>Price: $<span id="product-price"></span></p>
-    <p>Weight: <span id="product-weight"></span> g</p>
-    <p id="product-availability"></p>
-    <p>Deals: <span id="product-deals"></span></p>
-    <p>Promos: <span id="product-promos"></span></p>
-
-    <button onclick="addToCart()">Add to Cart</button>
-    <button onclick="addToWishlist()">Add to Wishlist</button>
-
-    <h2>Recommendations</h2>
-    <button onclick="fetchRecommendations()">Fetch Recommendations</button>
-    <ul id="recommendations"></ul>
-
-    <h2>Submit Feedback</h2>
-    <input type="number" id="user-id" placeholder="User ID">
-    <input type="number" id="product-id" placeholder="Product ID">
-    <input type="number" id="rating" placeholder="Rating (1-5)">
-    <button onclick="submitFeedback()">Submit Feedback</button>
-
-    <script>
         function fetchRecommendations() {
             const userId = document.getElementById('user-id').value;
             fetch(`/recommendations?user_id=${userId}`)
@@ -195,18 +148,7 @@
             });
         }
 
-        function addToCart() {
-            // Add to cart logic
-        }
-
-        function addToWishlist() {
-            // Add to wishlist logic
-        }
+        fetchProduct();
     </script>
 </body>
 </html>
-<form action="/upload_id" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="user_id" value="USER_ID_HERE">
-    <input type="file" name="file" accept="image/*" required>
-    <button type="submit">Upload ID</button>
-</form>

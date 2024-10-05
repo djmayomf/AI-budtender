@@ -60,7 +60,7 @@
     function sendMessage() {
         var userInput = document.getElementById('user-input').value;
         var chatbox = document.getElementById('chatbox');
-        chatbox.innerHTML += `<div>User: ${userInput}</div>`;
+        chatbox.innerHTML += `<div>User: ${sanitize(userInput)}</div>`;
         
         fetch('/chatbot', {
             method: 'POST',
@@ -71,10 +71,21 @@
         })
         .then(response => response.json())
         .then(data => {
-            chatbox.innerHTML += `<div>Chatbot: ${data.response}</div>`;
+            chatbox.innerHTML += `<div>Chatbot: ${sanitize(data.response)}</div>`;
+            chatbox.scrollTop = chatbox.scrollHeight;
+        })
+        .catch(error => {
+            chatbox.innerHTML += `<div>Error: ${sanitize(error.message)}</div>`;
+            chatbox.scrollTop = chatbox.scrollHeight;
         });
 
         document.getElementById('user-input').value = '';
+    }
+
+    function sanitize(str) {
+        var temp = document.createElement('div');
+        temp.textContent = str;
+        return temp.innerHTML;
     }
 </script>
 
