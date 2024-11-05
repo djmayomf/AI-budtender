@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatbot</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
         #chatbot {
             position: fixed;
             bottom: 0;
@@ -16,11 +19,13 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             display: none;
             flex-direction: column;
+            z-index: 1000;
         }
         #chatbox {
             flex: 1;
             overflow-y: auto;
             padding: 10px;
+            border-bottom: 1px solid #ccc;
         }
         #input {
             display: flex;
@@ -30,26 +35,31 @@
             flex: 1;
             border: none;
             padding: 10px;
+            resize: none;
         }
         #input button {
             border: none;
             background-color: #007bff;
             color: white;
             padding: 10px;
+            cursor: pointer;
+        }
+        #input button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
 
-<div id="chatbot">
-    <div id="chatbox"></div>
+<div id="chatbot" role="dialog" aria-labelledby="chatbot-title" aria-modal="true">
+    <div id="chatbox" aria-live="polite"></div>
     <div id="input">
-        <textarea id="user-input" placeholder="How are you feeling today?"></textarea>
-        <button onclick="sendMessage()">Send</button>
+        <textarea id="user-input" placeholder="How are you feeling today?" aria-label="User input"></textarea>
+        <button type="button" onclick="sendMessage()">Send</button>
     </div>
 </div>
 
-<button onclick="toggleChatbot()">Chat with us</button>
+<button type="button" onclick="toggleChatbot()">Chat with us</button>
 
 <script>
     function toggleChatbot() {
@@ -58,9 +68,9 @@
     }
 
     function sendMessage() {
-        var userInput = document.getElementById('user-input').value;
+        var userInput = document.getElementById('user-input').value.trim();
         var chatbox = document.getElementById('chatbox');
-        chatbox.innerHTML += `<div>User: ${sanitize(userInput)}</div>`;
+        chatbox.innerHTML += `<div>User: ${userInput}</div>`;
         
         fetch('/chatbot', {
             method: 'POST',
@@ -69,14 +79,14 @@
             },
             body: JSON.stringify({ message: userInput }),
         })
-        .then(response => response.json())
-        .then(data => {
-            chatbox.innerHTML += `<div>Chatbot: ${sanitize(data.response)}</div>`;
-            chatbox.scrollTop = chatbox.scrollHeight;
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
         })
-        .catch(error => {
-            chatbox.innerHTML += `<div>Error: ${sanitize(error.message)}</div>`;
-            chatbox.scrollTop = chatbox.scrollHeight;
+        .then(data => {
+            chatbox.innerHTML += `<div>Chatbot: ${data.response}</div>`;
         });
 
         document.getElementById('user-input').value = '';

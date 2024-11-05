@@ -1,6 +1,45 @@
-user_id,product_id,rating
-1,101,5
-1,102,3
-2,101,4
-2,103,2
-3,104,5
+import sqlite3
+
+def insert_preferences(data):
+    """Insert multiple user preferences into the preferences table."""
+    try:
+        with sqlite3.connect('preferences.db') as conn:
+            c = conn.cursor()
+            c.executemany('''
+                INSERT INTO preferences (user_id, product_id, rating)
+                VALUES (?, ?, ?)
+            ''', data)
+            conn.commit()
+            print("Data inserted successfully.")
+    except sqlite3.Error as e:
+        print(f"An error occurred while inserting data: {e}")
+
+if __name__ == '__main__':
+    # Sample data to insert
+    preferences_data = [
+        (1, 101, 5),
+        (1, 102, 3),
+        (2, 101, 4),
+        (2, 103, 2),
+        (3, 104, 5)
+    ]
+    
+    insert_preferences(preferences_data)
+    def get_all_preferences():
+    """Retrieve all preferences from the preferences table."""
+    try:
+        with sqlite3.connect('preferences.db') as conn:
+            c = conn.cursor()
+            c.execute('SELECT * FROM preferences')
+            return c.fetchall()
+    except sqlite3.Error as e:
+        print(f"An error occurred while retrieving data: {e}")
+        return []
+
+if __name__ == '__main__':
+    # Insert data
+    insert_preferences(preferences_data)
+    
+    # Retrieve and print all preferences
+    all_preferences = get_all_preferences()
+    print(all_preferences)

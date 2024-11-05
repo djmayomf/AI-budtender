@@ -1,14 +1,14 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import validates
-from datetime import date
 
 db = SQLAlchemy()
 
 class UserProfile(db.Model):
+    __tablename__ = 'user_profiles'  # Explicitly define the table name
+
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     phone_number = db.Column(db.String(20), unique=True, nullable=False)
-    date_of_birth = db.Column(db.Date, nullable=False)
+    date_of_birth = db.Column(db.String(10), nullable=False)
     payment_method = db.Column(db.String(255))  # Store payment method info
 
     @validates('email')
@@ -23,10 +23,11 @@ class UserProfile(db.Model):
 
     def __repr__(self):
         return f'<UserProfile {self.email}>'
-
 class Product(db.Model):
+    __tablename__ = 'products'  # Explicitly define the table name
+
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), nullable=False)
+    name = db.Column(db.String(255), nullable=False, index=True)
     description = db.Column(db.Text, nullable=True)
     price = db.Column(db.Float, nullable=False)
     weight = db.Column(db.Float, nullable=False)

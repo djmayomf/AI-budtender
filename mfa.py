@@ -1,13 +1,22 @@
 import random
 import smtplib
 from email.mime.text import MIMEText
-import os
-import logging
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+def send_verification_code(email, smtp_server, smtp_port, sender_email, sender_password):
+    """
+    Send a verification code to the specified email address.
 
-def send_verification_code(email):
+    Parameters:
+    - email (str): The recipient's email address.
+    - smtp_server (str): The SMTP server address.
+    - smtp_port (int): The SMTP server port.
+    - sender_email (str): The sender's email address.
+    - sender_password (str): The sender's email password.
+
+    Returns:
+    - int: The generated verification code.
+    - str: An error message if sending fails.
+    """
     verification_code = random.randint(100000, 999999)
     
     # Retrieve environment variables
@@ -23,36 +32,18 @@ def send_verification_code(email):
     # Send email with verification code
     msg = MIMEText(f'Your verification code is {verification_code}')
     msg['Subject'] = 'Your Verification Code'
-    msg['From'] = email_address
+    msg['From'] = 'your-email@example.com'
     msg['To'] = email
 
     try:
-        with smtplib.SMTP(smtp_server) as server:
-            server.login(email_address, email_password)
+        with smtplib.SMTP('smtp.example.com') as server:
+            server.login('your-email@example.com', 'your-password')
             server.send_message(msg)
         logging.info(f"Verification code sent to {email}")
         return verification_code
-    except smtplib.SMTPAuthenticationError:
-        logging.error("Failed to authenticate with the SMTP server.")
-        return "Failed to send email: Authentication error"
-    except smtplib.SMTPException as e:
-        logging.error(f"SMTP error occurred: {e}")
-        return f"Failed to send email: {e}"
     except Exception as e:
         logging.error(f"An error occurred: {e}")
         return f"Failed to send email: {e}"
 
 def verify_code(input_code, actual_code):
     return input_code == actual_code
-
-# Example usage
-if __name__ == "__main__":
-    email = "recipient@example.com"
-    code = send_verification_code(email)
-    print(f"Sent verification code: {code}")
-    # Simulate user input for verification
-    user_input = int(input("Enter the verification code: "))
-    if verify_code(user_input, code):
-        print("Verification successful!")
-    else:
-        print("Verification failed.")
