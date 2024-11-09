@@ -5,232 +5,285 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Page</title>
     <style>
-        /* Basic styles for loading indicators */
+        :root {
+            --primary-green: #43A047;
+            --light-green: #81C784;
+            --dark-green: #2E7D32;
+            --off-white: #FAFAFA;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--off-white);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        /* Large, easy to read text */
+        h1, h2 {
+            color: var(--dark-green);
+            margin-bottom: 1rem;
+        }
+
+        /* Card-style containers */
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        /* Big, easy to tap buttons */
+        button {
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            margin: 10px 0;
+            cursor: pointer;
+            width: 100%;
+            max-width: 300px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: var(--dark-green);
+        }
+
+        /* Price and weight styling */
+        .product-info {
+            font-size: 1.2rem;
+            margin: 15px 0;
+        }
+
+        /* Deals and promos highlighting */
+        .highlight {
+            background-color: var(--light-green);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        /* Loading indicator */
         .loading {
             display: none;
+            text-align: center;
+            padding: 20px;
+            color: var(--primary-green);
         }
+
         .loading.active {
-            display: inline;
+            display: block;
+        }
+
+        /* Error messages */
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: none;
+        }
+
+        /* Lists styling */
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        /* Feedback form styling */
+        .feedback-form {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-top: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 2px solid var(--light-green);
+            border-radius: 8px;
+            font-size: 1.1rem;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            button {
+                padding: 20px;
+                font-size: 1.2rem;
+            }
+
+            .product-info {
+                font-size: 1.3rem;
+            }
         }
     </style>
 </head>
 <body>
-
-    <h1 id="product-name"></h1>
-    <p id="product-description"></p>
-    <p>Price: $<span id="product-price"></span></p>
-    <p>Weight: <span id="product-weight"></span> g</p>
-    <p id="product-availability"></p>
-    <p>Deals: <span id="product-deals"></span></p>
-    <p>Promos: <span id="product-promos"></span></p>
-
-    <button onclick="addToCart()">Add to Cart</button>
-    <button onclick="addToWishlist()">Add to Wishlist</button>
-
-    <script>
-        const productId = 1; // Replace with dynamic product ID
+    <div class="product-card">
+        <h1 id="product-name"></h1>
+        <p id="product-description"></p>
         
-        function fetchProduct() {
-            showLoading();
-            fetch(`/product/${productId}`)
-                .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    return response.json();
-                })
-                .then(data => {
-                    document.getElementById('product-name').innerText = data.name;
-                    document.getElementById('product-description').innerText = data.description;
-                    document.getElementById('product-price').innerText = data.price;
-                    document.getElementById('product-weight').innerText = data.weight;
-                    document.getElementById('product-availability').innerText = data.availability ? 'In Stock' : 'Out of Stock';
-                    document.getElementById('product-deals').innerText = data.deals;
-                    document.getElementById('product-promos').innerText = data.promos;
-                })
-                .catch(error => alert('Error fetching product: ' + error))
-                .finally(hideLoading);
-        }
+        <div class="product-info">
+            <p>Price: $<span id="product-price"></span></p>
+            <p>Weight: <span id="product-weight"></span> g</p>
+            <p id="product-availability"></p>
+        </div>
 
-        function addToCart() {
-            showLoading();
-            fetch(`/product/${productId}/add_to_cart`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ quantity: 1 })
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
-                return response.json();
-            })
-            .then(data => alert('Product added to cart!'))
-            .catch(error => alert('Error adding to cart: ' + error))
-            .finally(hideLoading);
-        }
+        <div class="highlight">
+            <p>Deals: <span id="product-deals"></span></p>
+            <p>Promos: <span id="product-promos"></span></p>
+        </div>
 
-        function addToWishlist() {
-            const userId = document.getElementById('user-id').value;
-            showLoading();
-            fetch(`/product/${productId}/add_to_wishlist`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: userId })
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert('Product added to wishlist!');
-            });
-        }
+        <button onclick="addToCart()">🛒 Add to Cart</button>
+        <button onclick="addToWishlist()">❤️ Add to Wishlist</button>
+    </div>
 
-        fetchProduct();
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Page</title>
-</head>
-<body>
-    <h1 id="product-name"></h1>
-    <p id="product-description"></p>
-    <p>Price: $<span id="product-price"></span></p>
-    <p>Weight: <span id="product-weight"></span> g</p>
-    <p id="product-availability"></p>
-    <p>Deals: <span id="product-deals"></span></p>
-    <p>Promos: <span id="product-promos"></span></p>
+    <div class="loading" id="loading">
+        <h3>Loading... Please Wait</h3>
+        <div class="spinner"></div>
+    </div>
 
-    <button onclick="addToCart()">Add to Cart</button>
-    <button onclick="addToWishlist()">Add to Wishlist</button>
+    <div class="error-message" id="error-message"></div>
 
-    <h2>Strains from Leafly</h2>
-    <button onclick="fetchLeaflyStrains()">Fetch Leafly Strains</button>
-    <ul id="leafly-strains"></ul>
+    <div class="product-card">
+        <h2>🌿 Strains from Leafly</h2>
+        <button onclick="fetchLeaflyStrains()">View Strains</button>
+        <ul id="leafly-strains"></ul>
+    </div>
 
-    <h2>Deals from Weedmaps</h2>
-    <button onclick="fetchWeedmapsDeals()">Fetch Weedmaps Deals</button>
-    <ul id="weedmaps-deals"></ul>
+    <div class="product-card">
+        <h2>💰 Deals from Weedmaps</h2>
+        <button onclick="fetchWeedmapsDeals()">View Deals</button>
+        <ul id="weedmaps-deals"></ul>
+    </div>
+
+    <div class="feedback-form">
+        <h2>✨ Share Your Experience</h2>
+        <input type="number" id="user-id" placeholder="Your User ID">
+        <input type="number" id="product-id" placeholder="Product ID">
+        <input type="number" id="rating" placeholder="Rating (1-5)" min="1" max="5">
+        <button onclick="submitFeedback()">Submit Feedback</button>
+    </div>
 
     <script>
-        function fetchLeaflyStrains() {
-            fetch('/scrape/leafly/strains')
-                .then(response => response.json())
-                .then(data => {
-                    const list = document.getElementById('leafly-strains');
-                    list.innerHTML = '';
-                    data.forEach(strain => {
-                        const item = document.createElement('li');
-                        item.textContent = `${strain.name}: ${strain.description}`;
-                        list.appendChild(item);
-                    });
-                });
+        // Show/hide loading indicator
+        function showLoading() {
+            document.getElementById('loading').classList.add('active');
         }
 
-        function fetchWeedmapsDeals() {
-            fetch('/scrape/weedmaps/deals')
-                .then(response => response.json())
-                .then(data => {
-                    const list = document.getElementById('weedmaps-deals');
-                    list.innerHTML = '';
-                    data.forEach(deal => {
-                        const item = document.createElement('li');
-                        item.textContent = `${deal.title}: ${deal.description}`;
-                        list.appendChild(item);
-                    });
-                });
+        function hideLoading() {
+            document.getElementById('loading').classList.remove('active');
         }
 
-        function addToCart() {
-            // Add to cart logic
+        // Error handling
+        function showError(message) {
+            const errorElement = document.getElementById('error-message');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
         }
 
-        function addToWishlist() {
-            // Add to wishlist logic
-        }
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Page</title>
-</head>
-<body>
-    <h1 id="product-name"></h1>
-    <p id="product-description"></p>
-    <p>Price: $<span id="product-price"></span></p>
-    <p>Weight: <span id="product-weight"></span> g</p>
-    <p id="product-availability"></p>
-    <p>Deals: <span id="product-deals"></span></p>
-    <p>Promos: <span id="product-promos"></span></p>
-
-    <button onclick="addToCart()">Add to Cart</button>
-    <button onclick="addToWishlist()">Add to Wishlist</button>
-
-    <h2>Recommendations</h2>
-    <button onclick="fetchRecommendations()">Fetch Recommendations</button>
-    <ul id="recommendations"></ul>
-
-    <h2>Submit Feedback</h2>
-    <input type="number" id="user-id" placeholder="User ID">
-    <input type="number" id="product-id" placeholder="Product ID">
-    <input type="number" id="rating" placeholder="Rating (1-5)">
-    <button onclick="submitFeedback()">Submit Feedback</button>
-
-    <script>
-        function fetchRecommendations() {
-            const userId = document.getElementById('user-id').value;
-            showLoading();
-            fetch(`/recommendations?user_id=${userId}`)
-                .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    return response.json();
-                })
-                .then(data => {
-                    const list = document.getElementById('recommendations');
-                    list.innerHTML = '';
-                    data.forEach(productId => {
-                        const item = document.createElement('li');
-                        item.textContent = `Product ID: ${productId}`;
-                        list.appendChild(item);
-                    });
-                })
-                .catch(error => alert('Error fetching recommendations: ' + error))
-                .finally(hideLoading);
-        }
-
-        function submitFeedback() {
-            const userId = document.getElementById('user-id').value;
-            const productId = document.getElementById('product-id').value;
-            const rating = document.getElementById('rating').value;
-
-            if (!userId || !productId || !rating) {
-                alert('Please fill in all fields.');
-                return;
+        // Fetch product details
+        async function fetchProduct() {
+            try {
+                showLoading();
+                const response = await fetch(`/product/${productId}`);
+                if (!response.ok) throw new Error('Failed to load product');
+                const data = await response.json();
+                
+                document.getElementById('product-name').innerText = data.name;
+                document.getElementById('product-description').innerText = data.description;
+                document.getElementById('product-price').innerText = data.price;
+                document.getElementById('product-weight').innerText = data.weight;
+                document.getElementById('product-availability').innerText = 
+                    data.availability ? '✅ In Stock' : '❌ Out of Stock';
+                document.getElementById('product-deals').innerText = data.deals;
+                document.getElementById('product-promos').innerText = data.promos;
+            } catch (error) {
+                showError('Could not load product details. Please try again.');
+            } finally {
+                hideLoading();
             }
-
-            showLoading();
-            fetch('/feedback', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: userId, product_id: productId, rating: rating })
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.status);
-            });
         }
 
-        function addToCart() {
-            // Add to cart logic
+        // Initialize
+        fetchProduct();
+
+        // Add geolocation functions
+        async function getUserLocation() {
+            try {
+                const position = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject);
+                });
+                
+                return {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                };
+            } catch (error) {
+                showError('Could not get your location. Please enable location services.');
+                return null;
+            }
         }
 
-        function addToWishlist() {
-            // Add to wishlist logic
+        async function findNearbyDispensaries() {
+            try {
+                showLoading();
+                const location = await getUserLocation();
+                if (!location) return;
+                
+                const response = await fetch('/get_nearby_dispensaries', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(location)
+                });
+                
+                if (!response.ok) throw new Error('Failed to fetch dispensaries');
+                const dispensaries = await response.json();
+                
+                // Update UI with nearby dispensaries
+                const list = document.getElementById('nearby-dispensaries');
+                list.innerHTML = dispensaries.map(d => `
+                    <li class="dispensary-card">
+                        <img src="${d.image_url || 'default-dispensary.png'}" alt="${d.name}">
+                        <h3>${d.name}</h3>
+                        <p>${d.distance} miles away</p>
+                        <p>${d.address}</p>
+                        <button onclick="viewMenu('${d.id}')">View Menu</button>
+                    </li>
+                `).join('');
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                hideLoading();
+            }
         }
     </script>
-
 </body>
 </html>

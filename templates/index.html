@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BudgetBud - Find the Best Cannabis Deals</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <img src="/static/images/logo.svg" alt="BudgetBud Logo">
+            <span>BudgetBud</span>
+        </div>
+        <div class="nav-links">
+            <a href="#deals">Deals</a>
+            <a href="#strains">Strains</a>
+            <a href="#dispensaries">Dispensaries</a>
+            <a href="#about">About</a>
+            <button class="login-btn" onclick="showLoginModal()">Login</button>
+        </div>
+        <button class="menu-toggle" onclick="toggleMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+    </nav>
+
+    <!-- Add this after the navbar -->
+    <nav class="categories-nav">
+        <div class="category-wrapper">
+            <div class="main-categories">
+                <a href="#" class="category-item" data-category="flower">
+                    <i class="fas fa-cannabis"></i>
+                    Flower
+                </a>
+                <a href="#" class="category-item" data-category="edibles">
+                    <i class="fas fa-cookie-bite"></i>
+                    Edibles
+                </a>
+                <a href="#" class="category-item" data-category="concentrates">
+                    <i class="fas fa-vial"></i>
+                    Concentrates
+                </a>
+                <a href="#" class="category-item" data-category="vapes">
+                    <i class="fas fa-smoking"></i>
+                    Vapes
+                </a>
+                <a href="#" class="category-item" data-category="prerolls">
+                    <i class="fas fa-joint"></i>
+                    Pre-rolls
+                </a>
+                <a href="#" class="category-item" data-category="accessories">
+                    <i class="fas fa-bong"></i>
+                    Accessories
+                </a>
+            </div>
+        </div>
+        
+        <!-- Subcategories panels -->
+        <div class="subcategories-panel" id="flower-panel">
+            <div class="subcategory-group">
+                <h4>Types</h4>
+                <a href="#" data-filter="indica">Indica</a>
+                <a href="#" data-filter="sativa">Sativa</a>
+                <a href="#" data-filter="hybrid">Hybrid</a>
+                <a href="#" data-filter="cbd">CBD</a>
+            </div>
+            <div class="subcategory-group">
+                <h4>Weight</h4>
+                <a href="#" data-filter="1g">1g</a>
+                <a href="#" data-filter="3.5g">3.5g</a>
+                <a href="#" data-filter="7g">7g</a>
+                <a href="#" data-filter="14g">14g</a>
+                <a href="#" data-filter="28g">28g</a>
+            </div>
+            <div class="subcategory-group">
+                <h4>Price Range</h4>
+                <a href="#" data-filter="budget">Budget</a>
+                <a href="#" data-filter="mid">Mid-Tier</a>
+                <a href="#" data-filter="premium">Premium</a>
+                <a href="#" data-filter="luxury">Luxury</a>
+            </div>
+        </div>
+        
+        <!-- Add similar panels for other categories -->
+    </nav>
+
+    <!-- Add filters section -->
+    <section class="filters-section">
+        <div class="active-filters">
+            <!-- Active filters will be added here dynamically -->
+        </div>
+        <div class="sort-options">
+            <select id="sort-by">
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="rating">Top Rated</option>
+                <option value="popular">Most Popular</option>
+                <option value="deals">Best Deals</option>
+            </select>
+        </div>
+    </section>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Find the Best Cannabis Deals Near You</h1>
+            <p>Compare prices, track deals, and save money on your favorite products</p>
+            <div class="search-bar">
+                <input type="text" placeholder="Enter your location">
+                <button onclick="searchDeals()">
+                    <i class="fas fa-search"></i> Find Deals
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section id="deals" class="featured-deals">
+        <h2>Today's Top Deals</h2>
+        <div class="deals-grid">
+            <!-- Deals will be populated dynamically -->
+        </div>
+        <button class="load-more">Load More Deals</button>
+    </section>
+
+    <section id="strains" class="popular-strains">
+        <h2>Popular Strains</h2>
+        <div class="strain-carousel">
+            <!-- Strains will be populated dynamically -->
+        </div>
+    </section>
+
+    <section id="dispensaries" class="nearby-dispensaries">
+        <h2>Nearby Dispensaries</h2>
+        <div class="map-container">
+            <div id="map"></div>
+            <div class="dispensary-list">
+                <!-- Dispensaries will be populated dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="features">
+        <h2>Why Choose BudgetBud?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-percentage"></i>
+                <h3>Best Deals</h3>
+                <p>Find the lowest prices and best deals in your area</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-bell"></i>
+                <h3>Price Alerts</h3>
+                <p>Get notified when prices drop on your favorite products</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-chart-line"></i>
+                <h3>Price History</h3>
+                <p>Track price changes and find the best time to buy</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>BudgetBud</h3>
+                <p>Finding you the best cannabis deals since 2024</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="#deals">Deals</a>
+                <a href="#strains">Strains</a>
+                <a href="#dispensaries">Dispensaries</a>
+            </div>
+            <div class="footer-section">
+                <h3>Connect</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 BudgetBud. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <h2>Welcome Back</h2>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <input type="email" placeholder="Email" required>
+                <input type="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p>Don't have an account? <a href="#" onclick="showSignupModal()">Sign up</a></p>
+        </div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+</body>
+</html> 

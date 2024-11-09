@@ -2,24 +2,15 @@ import requests
 from bs4 import BeautifulSoup
 
 def scrape_leafly_strains():
-    url = 'https://www.leafly.com/strains'
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-
-    strains = []
-    for strain in soup.select('.strain-card'):
-        name = strain.select_one('.strain-name').text
-        description = strain.select_one('.strain-description').text
-        strains.append({'name': name, 'description': description})
-
-        logging.info(f"Scraped {len(strains)} strains from Leafly")
-        return strains
+    leafly_url = 'https://www.leafly.com/strains'
+    try:
+        response = requests.get(leafly_url)
+        response.raise_for_status()  # Raise an exception for 4xx or 5xx status codes
     except requests.RequestException as e:
-        logging.error(f"Error fetching Leafly strains: {e}")
-        return []
-    except Exception as e:
-        logging.error(f"Error parsing Leafly strains: {e}")
-        return []
+        print(f"Error: {e}")
+        return None
+
+    # ... rest of the code remains the same ...
 
 def scrape_weedmaps_deals() -> list:
     """Scrape deals from Weedmaps."""

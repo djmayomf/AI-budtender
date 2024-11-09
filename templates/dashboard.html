@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <h1>Welcome, {{ user.name }}</h1>
+            <div class="notifications">
+                <span class="notification-count">{{ notifications|length }}</span>
+                <button id="notifications-toggle">🔔</button>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <!-- Favorite Deals -->
+            <section class="dashboard-section">
+                <h2>Your Favorite Deals</h2>
+                <div id="favorite-deals" class="deals-grid"></div>
+            </section>
+
+            <!-- Price Alerts -->
+            <section class="dashboard-section">
+                <h2>Price Alerts</h2>
+                <div id="price-alerts" class="alerts-list"></div>
+                <button onclick="dashboard.createPriceAlert()">
+                    + New Alert
+                </button>
+            </section>
+
+            <!-- Price History -->
+            <section class="dashboard-section">
+                <h2>Price History</h2>
+                <canvas id="price-history-chart"></canvas>
+            </section>
+
+            <!-- Deal Comparison -->
+            <section class="dashboard-section">
+                <h2>Compare Deals</h2>
+                <div id="deal-comparison" class="comparison-grid"></div>
+            </section>
+        </div>
+    </div>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html> 

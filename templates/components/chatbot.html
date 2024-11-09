@@ -1,0 +1,30 @@
+<!-- Add trigger button -->
+<div class="chat-trigger" id="chat-trigger" onclick="chatbot.show()">
+    <i class="fas fa-comments"></i>
+</div>
+
+<div class="chatbot-container minimized" id="chatbot">
+    <div class="chatbot-header">
+        <h3>BudBot Assistant</h3>
+        <div class="header-controls">
+            <button onclick="chatbot.minimize()" class="minimize-btn">
+                <i class="fas fa-minus"></i>
+            </button>
+            <button onclick="chatbot.close()" class="close-btn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+        <!-- Welcome messages will be added here -->
+    </div>
+    <div class="chat-input">
+        <input type="text" 
+               id="user-message" 
+               placeholder="Tell me what you're looking for..."
+               onkeypress="if(event.key === 'Enter') chatbot.sendMessage()">
+        <button onclick="chatbot.sendMessage()">
+            <i class="fas fa-paper-plane"></i>
+        </button>
+    </div>
+</div> 
